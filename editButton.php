@@ -1,0 +1,1 @@
+<input type="text" id = "locatie" naam = "Locatie" placeholder = "Products Locatie" required>
