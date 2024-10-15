@@ -31,7 +31,7 @@ input[type="Product"] {
 }
 
 button[type="submit"] {
-    width: 90%;
+    width: 100%;
     padding: 10px;
     background-color: #4CAF50;
     color: #fff;
@@ -89,7 +89,7 @@ input[type="search"]
 
 button[type="submit"],
 button[type="delete"] {
-    width: 90%;
+    width: 100%;
     margin-top: 10px;    
     padding: 10px;
     background-color: #4CAF50;
@@ -127,7 +127,7 @@ p {
 }
 .links{
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 1;
     display: grid;
     width: 90%;
 }

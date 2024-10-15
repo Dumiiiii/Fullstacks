@@ -38,22 +38,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 
+if (isset($_POST['delete'])) {
+    if (is_numeric($_POST["delete"])) {  // Controleer of het 'id' veld is meegestuurd
+    
+    
+    $ID = $_POST["delete"];  // Verkrijg het ID uit het formulier
+        // SQL-query om te verwijderen op basis van ID
+        $sql = "DELETE FROM Artikel WHERE idArtikel = ?";
+        $stmt = $conn->prepare($sql);
+
+        if ($stmt === false) {
+            die("Error preparing the query: " . $conn->error);
+        }
+
+        // Bind de parameter (de 'i' staat voor integer, omdat 'id' een integer is)
+        $stmt->bind_param("i", $ID);
+
+        // Voer de query uit
+        if ($stmt->execute()) {
+            echo "Product is verwijderd";
+        } else {
+            echo "Error deleting product: " . $stmt->error;
+        }
+
+        // Sluit de statement en connectie
+        $stmt->close();
+        $conn->close();
+   } else {
+        echo "Error: ID niet opgegeven voor verwijderen.";
+    }
+}
 
 
+// Unlock the colmun
 ?>
 
 
 
 
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
     <link rel="stylesheet" href="stylesheet.css">
 
     <p>ToolsforEver - Product Form</p>
@@ -94,14 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        </form>
        </div>
 
-       <div class= 'rechts'>
-        <form action = "deleteButton.php" method = "POST">
-            <label for="Naam">Verwijderen</label>
-            <input type="text" id="Naam" name="Naam" placeholder="Product name" required>
-            <input type="text" id = "Locatie" name = "Locatie" placeholder = "Product locatie">
-            <input name = "delete" type = "submit" id = "delete" value="Delete">
-         </form>
-         </div>
         
 
 </body>
