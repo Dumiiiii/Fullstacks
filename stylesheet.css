@@ -180,3 +180,21 @@ p {
     width: 30%;
     
 }
+Select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #333;
+}
+
+option {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #333;
+}
+

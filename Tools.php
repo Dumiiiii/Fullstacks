@@ -79,7 +79,7 @@ if (isset($_POST['delete'])) {
     <link rel="stylesheet" href="stylesheet.css">
 
     <p>ToolsforEver - Product Form</p>
-    <a href="">Bestelling</a>
+    <a href="ToolsChange.php">Voorraad</a>
     <?php include 'search.php' ?>
 </head>
 <body>
