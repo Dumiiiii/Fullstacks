@@ -1,4 +1,5 @@
 <?php
+// Submit form data to the database
 include 'config_2.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -37,14 +38,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-
+// Delete a product from the database
 if (isset($_POST['delete'])) {
     if (is_numeric($_POST["delete"])) {  // Controleer of het 'id' veld is meegestuurd
     
     
     $ID = $_POST["delete"];  // Verkrijg het ID uit het formulier
+    $Locatie = $_POST["locatie"];  // Verkrijg de locatie uit het formulier
         // SQL-query om te verwijderen op basis van ID
-        $sql = "DELETE FROM Artikel WHERE idArtikel = ?";
+        $sql = "DELETE FROM Voorraad WHERE idArtikel = ? AND idLocatie = ?";
         $stmt = $conn->prepare($sql);
 
         if ($stmt === false) {
@@ -52,7 +54,7 @@ if (isset($_POST['delete'])) {
         }
 
         // Bind de parameter (de 'i' staat voor integer, omdat 'id' een integer is)
-        $stmt->bind_param("i", $ID);
+        $stmt->bind_param("ii", $ID, $Locatie);
 
         // Voer de query uit
         if ($stmt->execute()) {
@@ -64,9 +66,7 @@ if (isset($_POST['delete'])) {
         // Sluit de statement en connectie
         $stmt->close();
         $conn->close();
-   } else {
-        echo "Error: ID niet opgegeven voor verwijderen.";
-    }
+   }
 }
 
 
@@ -75,24 +75,43 @@ if (isset($_POST['delete'])) {
 
 
 
-
+<head>
     <link rel="stylesheet" href="stylesheet.css">
 
     <p>ToolsforEver - Product Form</p>
-    <a href="ToolsChange.php">Voorraad</a>
-    <?php include 'search.php' ?>
+    <a href="ToolsVooraad.php">Voorraad</a>
+    <a href="Bestelijst.php">Besstellijst</a>
+<!-- Search bar -->
+    <script>
+        function search() {
+            var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        document.getElementById("SearchProducten").innerHTML = this.responseText;
+      }
+    };
+    xmlhttp.open("GET", "TableProducten.php", true);
+    xmlhttp.send();s
+  };
+    </script>
 </head>
 <body>
    <div class="grid-container">
-        
-   <div class = 'mid'>
+    
+   <div class = 'mid' id="SearchProducten">
 <?php include 'TableProducten.php' ?>
-
 </div>
 
 
 
   <div class = "links">
+
+  <form method="POST">
+    <input type="text" name="searchQuery" placeholder="Search for a product...">
+    <button type="submit" name="search" onclick="search()">Search</button>
+</form>
+<br>
+<!-- form for producten toevoegen  -->
        <form action="Tools.php" method="POST">
         
     
@@ -116,7 +135,31 @@ if (isset($_POST['delete'])) {
        </form>
        </div>
 
-        
+    <form id="DeleteForm" action="Delete.php" method="POST">
+    <label for="id">ID</label>
+        <select name="id">
+            <?php
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    foreach ($row as $ProductID) {
+                        echo "<option value='$ProductID'>$ProductID</option>";
+                    }
+                }
+            }
+            ?>
+        </select>
+            <label for="locatie">Locatie</label>
+            <select name="locatie">
+                <option value="">Selecteer een locatie</option>
+                <option value="13">Amsterdam</option>
+                <option value="3">Rotterdam</option>
+                <option value="2">Eindhoven</option>
+                <option value="1">Almere</option>
+                <option value="0">Alle locaties</option>
+            </select>
+
+            <input  type="submit" value="Delete" id = "delete">
+</from>
 
 </body>
 </html>

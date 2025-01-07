@@ -2,11 +2,27 @@
 
 include 'config_2.php';
 
+error_reporting(0);
+
+$search = $_POST['searchQuery'];
+
+if(!empty($search)){
+$sql = "SELECT * FROM Artikel
+Left join Voorraad on Artikel.idArtikel = Voorraad.idArtikel
+left join Locatie on Voorraad.idLocatie = Locatie.idLocatie
+WHERE LocatieNaam = ?;";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $search);
+$stmt->execute();
+$result = $stmt->get_result();
+}else{
 $sql = "SELECT * FROM Artikel
 Left join Voorraad on Artikel.idArtikel = Voorraad.idArtikel
 left join Locatie on Voorraad.idLocatie = Locatie.idLocatie;";
 
 $result = $conn->query($sql);
+}
   // Start the table and header row with CSS class
 
   echo "<table class='styled-table'>";
@@ -19,7 +35,6 @@ $result = $conn->query($sql);
           <th>Waarde Verkoop</th>
           <th>Locatie</th>
           <th>Aantal</th>
-          <th>Submit</th>
             </tr>";
   echo "</thead>";
   echo "<tbody>";
@@ -39,13 +54,7 @@ $result = $conn->query($sql);
         <td><input type = 'text' name = 'waarde_inkoop'id = 'waarde_inkoop'  value= '<?php echo $row["waarde_inkoop"] ?>' disabled></td>
           <td><input type = 'text' name = 'waarde_verkoop'id = 'waarde_verkoop'  value= '<?php echo $row["waarde_verkoop"] ?>' disabled></td>
           <td><input type = 'text' name = 'locatie' value= '<?php echo $row["locatieNaam"] ?>' disabled></td>
-            <td><input type = 'text' name = 'aantal' value= '<?php echo $row["aantal"] ?>' disabled></td>
-            <td>
-              <button name = 'delete' type = 'submit' id = 'delete' value= '<?php echo $row["idArtikel"] ?>'>Delete</button>
-            </td>    
-          </tr>
-  
-         </tr>
+            <td><input type = 'text' name = 'aantal' value= '<?php echo $row["aantal"] ?>' disabled></td>    
      </tbody>
      <?php
     }
@@ -59,4 +68,4 @@ $result = $conn->query($sql);
  $conn->close();  
 
 ?>
-  <!--  ` <button name = 'update' type = 'submit' id = 'update' onclick = "update()"  value= '-->
+

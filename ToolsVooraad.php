@@ -7,9 +7,9 @@ $result = $conn->query($sql);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $sql = "SELECT * FROM Artikel
-    Left join Voorraad on Artikel.idArtikel = Voorraad.Artikel_idArtikel
-    left join Locatie on Voorraad.Locatie_idLocatie = Locatie.idLocatie;";
+    $sql = "SELECT Artikel.idArtikel,Artikel.naam,Voorraad.aantal,Locatie.locatieNaam  from Artikel
+    INNER JOIN  (Voorraad)
+    INNER JOIN (Locatie)";
     
     if (isset($_POST['submit'])) {
         // Get form data
@@ -18,20 +18,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $Aantal = $_POST["aantal"];
 
         // Prepare the SQL query with placeholders
-        $sql = "UPDATE Voorraad SET Aantal = ? WHERE Artikel_idArtikel = ? AND Locatie_idLocatie = ?";
-        $stmt = $conn->prepare($sql);
+    
+        $stmt = $conn->prepare("INSERT INTO Voorraad (idArtikel, idLocatie, aantal) values (?, ?, ?)
+        ON DUPLICATE KEY UPDATE aantal = aantal + VALUES(aantal)");
 
         if ($stmt === false) {
             die("Error preparing the query: " . $conn->error);
         }
 
         // Bind the parameters 
-        $stmt->bind_param("iss", $ID, $Locatie, $Aantal);
+        $stmt->bind_param("iis", $ID, $Locatie, $Aantal);
 
         // Execute the query
         if ($stmt->execute()) {
             // After form submission, redirect to avoid resubmission on reload
-            header("Location: ToolsChange.php");
+            header("Location: Tools.php");
             exit(); // Ensure no further code is executed after the redirect
         } else {
             echo "Error: " . $stmt->error;
@@ -47,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <link rel="stylesheet" href="stylesheet.css">
 <p>Voorraad</p>
 <div class="mid">
-    <form action="ToolsChange.php" method="POST">
+    <form action="ToolsVooraad.php" method="POST">
         <label for="id">ID</label>
         <select name="id">
             <?php
@@ -62,10 +63,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </select>
         <label for="locatie">Locatie</label>
         <select name="locatie">
-            <option value="Amsterdam">Amsterdam</option>
-            <option value="Rotterdam">Rotterdam</option>
-            <option value="Utrecht">Utrecht</option>
-            <option value="Almere">Almere</option>
+            <option value="13">Amsterdam</option>
+            <option value="3">Rotterdam</option>
+            <option value="2">Eindhoven</option>
+            <option value="1">Almere</option>
         </select>
         <label for="aantal">Aantal</label>
         <input type="number" id="aantal" name="aantal" placeholder="Hoeveelheid" required>
